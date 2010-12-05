@@ -1,7 +1,7 @@
-//////////////////////////////////////////////////////////////////////////////// 
+﻿//////////////////////////////////////////////////////////////////////////////// 
 // NAME: Template
 // PURPOSE: Do Some Action...
-// CREATOR: gordon [at] gordonpotter.com
+// CREATOR: gordon@gordonpotter.com
 // LICENSE: MIT 
 // Copyright (c) 2010 Gordon Potter
 //
@@ -23,6 +23,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
+
+
+function theScript() {
+///////////////////////////////////////////////////
+// BEGIN THE SCRIPT
+//=================================================
+
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // INITIAL REQUIREMENTS
@@ -74,6 +82,25 @@ function main(args){
 // Include functions that offer partial functionality
 // These functions are called and acted upon within the mainProcess function
 
+function objReflection(obj, display) {
+    // Function for easy object reflection
+    var KVOs = [];
+    for(var member in obj){ 
+        KVOs.push("\n" + member + ":" + obj[member]);
+    };
+
+    switch(display)
+    {
+        case "alert":
+            alert("Object Relection: " + KVOs); 
+        break;
+        case "none":
+        break;        
+        default:
+            throw new Error('Unknown Display Type');                        
+    }
+    return KVOs;
+}
 
 function sfDialogFactory(dialog) {
   
@@ -108,7 +135,10 @@ function sfDialogFactory(dialog) {
 
                     var el = inputGroup.add(currentElement.type, undefined, currentElement.value);
 
-                    // TODO: Add more cases for other scriptui dialog elements
+                    // Additional properties added for future reflection
+                    el.elName = currentElement.name;
+                    el.elIndex = ii;   
+
                     switch(currentElement.type)
                     {
                         case "statictext":
@@ -131,6 +161,42 @@ function sfDialogFactory(dialog) {
         }
     }
 
+    function getControlValues(set) {
+        var elementsData = {};
+        elementsData.controls = [];      
+        // TO DO Add more types
+
+        var giLen = set.children.length;
+        for (var gi = 0; gi < giLen; gi++ ) 
+        {
+            var child = set.children[gi];
+            // alert(objReflection(child, "none", false));
+            // alert(child.type);    
+            var control = {};
+                control.name = child.elName;
+                control.index = child.elIndex;                
+                control.type = child.type;
+                control.visible = child.visible;
+            switch(child.type)
+            {
+                case "statictext":
+                    control.value = child.text;                
+                break;
+                case "edittext":
+                    control.value = child.text;                   
+                break; 
+                case "dropdownlist":                 
+                    control.value = child.selection.text; 
+                break;                         
+                default:
+                throw new Error('Unknown Dialog Element Type');                        
+            }
+            elementsData.controls.push(control);
+            // alert(objReflection(control, "none", false));
+        }   
+        return elementsData;
+    }
+
 
   // Buttons Group
   var buttonGroup = d.add("group");
@@ -140,7 +206,7 @@ function sfDialogFactory(dialog) {
       // Button Click Handlers
       bOK.onClick = function(){
           d.close();
-          dialog.callback("continue");
+          dialog.callback("continue", getControlValues(inputGroup));
           return true;
       }; 
       bCANCEL.onClick = function (){
@@ -220,10 +286,22 @@ function testDialog() {
   // Add to group list
   dialogObj.groups.push(group1);    
   
-  dialogObj.callback = function(type){
-    
+  dialogObj.callback = function(type, formData){
+
+    alert("Callback FUNCTION: " + objReflection(formData, "none", false));
+
     if (type === "continue"){
-      alert("Continue Buttons Clicked");
+        
+      // Do something with formData values here 
+        var cLen = formData.controls.length;
+        var formValues = '';
+        for (var c = 0; c < cLen; c++ ) 
+        {
+            formValues = formValues + formData.controls[c].type + ":" + formData.controls[c].value + "\n";
+        }    
+
+        alert("Continue Button Clicked.\n" + "Values Returned: \n" + formValues);
+
     }
     else {
       // Cancel
@@ -234,3 +312,11 @@ function testDialog() {
   
   return dialogObj;
 }
+
+
+//=================================================
+// END THE SCRIPT
+///////////////////////////////////////////////////
+}
+
+theScript();
