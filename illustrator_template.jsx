@@ -84,6 +84,11 @@ function main(args){
 
 function objReflection(obj, display) {
     // Function for easy object reflection
+    // USAGE EXAMPLE:
+    // var objectInfo = objReflection(someObject, "none");
+    // or    
+    // objReflection(someObject, "alert");
+
     var KVOs = [];
     for(var member in obj){ 
         KVOs.push("\n" + member + ":" + obj[member]);
@@ -97,7 +102,7 @@ function objReflection(obj, display) {
         case "none":
         break;        
         default:
-            throw new Error('Unknown Display Type');                        
+            return undefined;                       
     }
     return KVOs;
 }
