@@ -111,7 +111,7 @@ function objReflection(obj, display) {
     switch(display)
     {
         case "alert":
-            alert("Object Relection: " + KVOs); 
+            alert("Object Reflection: " + KVOs); 
         break;
         case "none":
         break;        
@@ -440,7 +440,6 @@ function takeMeasurement(doc_ref, unit, screenDPI, colorName, colorMode, markerO
     //  pixels conversion 
     //      points = (pixels / 150) * 72    assuming 150dpi system
 
-    // TODO Add PIXELS unit
     switch(unit)
     {
         case "points":
